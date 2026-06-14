@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>سفر در فضای عمیق | کهکشان‌های دور</title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            overflow-x: hidden;
+            background-color: #000;
+            color: #fff;
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .content {
+            position: relative;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .card {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(15px);
+            border-radius: 2rem;
+            padding: 2rem 2.5rem;
+            max-width: 500px;
+            border: 1px solid rgba(138, 43, 226, 0.5);
+            box-shadow: 0 0 50px rgba(138, 43, 226, 0.3);
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease;
+            pointer-events: auto;
+        }
+
+        .card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card h2 {
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, #fff, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .card p {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .card .accent {
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #a855f7, #ec4899);
+            margin-top: 1.5rem;
+            border-radius: 3px;
+        }
+
+        #sound-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(168, 85, 247, 0.5);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            pointer-events: auto;
+        }
+
+        #sound-btn:hover {
+            background: #a855f7;
+            transform: scale(1.1);
+        }
+
+        .scroll-hint {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 50;
+            opacity: 0.7;
+            transition: opacity 0.5s;
+            pointer-events: none;
+        }
+
+        .scroll-hint span {
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+        }
+
+        .scroll-hint .arrow {
+            width: 20px;
+            height: 20px;
+            border-right: 2px solid white;
+            border-bottom: 2px solid white;
+            transform: rotate(45deg);
+            margin: 8px auto;
+            animation: bounce 1.5s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: rotate(45deg) translateY(0); }
+            50% { transform: rotate(45deg) translateY(10px); }
+        }
+
+        @media (max-width: 768px) {
+            .card { padding: 1.5rem; margin: 1rem; }
+            .card h2 { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="canvas-container"></div>
+<button id="sound-btn">🔇</button>
+<div class="scroll-hint" id="scrollHint">
+    <span>اسکرول به پایین</span>
+    <div class="arrow"></div>
+</div>
+
+<div class="content">
+    <section id="sec1">
+        <div class="card" data-card="0">
+            <h2>🌌 اقیانوس بی‌کران</h2>
+            <p>به سفری در اعماق کهکشان خوش آمدی. اینجا جایی است که ستاره‌ها متولد می‌شوند و سیاره‌ها در سکوت مطلق می‌چرخند. هر اسکرول، تو را به اعماق بیشتری می‌برد...</p>
+            <div class="accent"></div>
+        </div>
+    </section>
+    <section id="sec2">
+        <div class="card" data-card="1">
+            <h2>🪐 سیاره بنفش</h2>
+            <p>سیاره‌ای غول‌پیکر با اتمسفری از گازهای سمی و طوفان‌های دائمی. حلقه‌های درخشان آن از ذرات یخ و غبار کیهانی تشکیل شده‌اند.</p>
+            <div class="accent"></div>
+        </div>
+    </section>
+    <section id="sec3">
+        <div class="card" data-card="2">
+            <h2>⭐ سحابی پروانه</h2>
+            <p>بقایای یک ستاره در حال مرگ. گازهای داغ با سرعت ۱ میلیون کیلومتر بر ساعت به فضا پرتاب می‌شوند و این نمایش نور را خلق می‌کنند.</p>
+            <div class="accent"></div>
+        </div>
+    </section>
+    <section id="sec4">
+        <div class="card" data-card="3">
+            <h2>🚀 به سوی بینهایت</h2>
+            <p>سفر ادامه دارد... هر اسکرول، راز جدیدی از این جهان بی‌پایان را فاش می‌کند. دست به ستاره‌ها بزن.</p>
+            <div class="accent"></div>
+        </div>
+    </section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+
+<script>
+    // ========== THREE.JS SETUP ==========
+    const container = document.getElementById('canvas-container');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x020210);
+    scene.fog = new THREE.FogExp2(0x020210, 0.0008);
+
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+    camera.position.set(0, 2, 12);
+    camera.lookAt(0, 0, -20);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    container.appendChild(renderer.domElement);
+
+    // ========== LIGHTS ==========
+    const ambientLight = new THREE.AmbientLight(0x111122);
+    scene.add(ambientLight);
+    
+    const sunLight = new THREE.PointLight(0xffaa66, 1.5, 500);
+    sunLight.position.set(50, 30, -100);
+    scene.add(sunLight);
+    
+    const backLight = new THREE.PointLight(0x8844ff, 0.8);
+    backLight.position.set(-30, 10, -80);
+    scene.add(backLight);
+    
+    const fillLight = new THREE.PointLight(0xff66cc, 0.5);
+    fillLight.position.set(20, -10, -50);
+    scene.add(fillLight);
+
+    // ========== STARFIELD با عمق (پارالاکس) ==========
+    const starCount = 6000;
+    const starGeometry = new THREE.BufferGeometry();
+    const starPositions = new Float32Array(starCount * 3);
+    const starColors = new Float32Array(starCount * 3);
+    
+    for (let i = 0; i < starCount; i++) {
+        // توزیع در یک مکعب بزرگ
+        starPositions[i*3] = (Math.random() - 0.5) * 800;
+        starPositions[i*3+1] = (Math.random() - 0.5) * 500;
+        starPositions[i*3+2] = (Math.random() - 0.5) * 400 - 100;
+        
+        const colorVal = 0.5 + Math.random() * 0.5;
+        starColors[i*3] = colorVal * (Math.random() > 0.7 ? 0.8 : 1);
+        starColors[i*3+1] = colorVal * (Math.random() > 0.8 ? 0.6 : 1);
+        starColors[i*3+2] = 1;
+    }
+    
+    starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+    starGeometry.setAttribute('color', new THREE.BufferAttribute(starColors, 3));
+    
+    const starMaterial = new THREE.PointsMaterial({ size: 0.25, vertexColors: true, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending });
+    const stars = new THREE.Points(starGeometry, starMaterial);
+    scene.add(stars);
+    
+    // ستاره‌های دور (برای حس عمق بیشتر)
+    const distantStarCount = 4000;
+    const distantGeo = new THREE.BufferGeometry();
+    const distantPos = new Float32Array(distantStarCount * 3);
+    for (let i = 0; i < distantStarCount; i++) {
+        distantPos[i*3] = (Math.random() - 0.5) * 1200;
+        distantPos[i*3+1] = (Math.random() - 0.5) * 800;
+        distantPos[i*3+2] = (Math.random() - 0.5) * 600 - 300;
+    }
+    distantGeo.setAttribute('position', new THREE.BufferAttribute(distantPos, 3));
+    const distantStars = new THREE.Points(distantGeo, new THREE.PointsMaterial({ color: 0x88aaff, size: 0.12, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending }));
+    scene.add(distantStars);
+    
+    // ========== سیاره اول (بنفش) ==========
+    const planet1Geo = new THREE.SphereGeometry(1.8, 64, 64);
+    const planet1Mat = new THREE.MeshPhongMaterial({ color: 0xaa55ff, emissive: 0x331166, emissiveIntensity: 0.4, shininess: 60 });
+    const planet1 = new THREE.Mesh(planet1Geo, planet1Mat);
+    planet1.position.set(8, -2, -35);
+    scene.add(planet1);
+    
+    // حلقه سیاره
+    const ringGeo = new THREE.TorusGeometry(2.5, 0.25, 32, 100);
+    const ringMat = new THREE.MeshPhongMaterial({ color: 0xdd88ff, emissive: 0x8822aa, emissiveIntensity: 0.3, transparent: true });
+    const ring = new THREE.Mesh(ringGeo, ringMat);
+    ring.rotation.x = Math.PI / 2.2;
+    ring.rotation.z = 0.5;
+    planet1.add(ring);
+    
+    // ========== سیاره دوم (قرمز/مریخی) ==========
+    const planet2Geo = new THREE.SphereGeometry(1.2, 64, 64);
+    const planet2Mat = new THREE.MeshPhongMaterial({ color: 0xcc6644, emissive: 0x441100, emissiveIntensity: 0.2 });
+    const planet2 = new THREE.Mesh(planet2Geo, planet2Mat);
+    planet2.position.set(-7, 3, -70);
+    scene.add(planet2);
+    
+    // ========== سیاره سوم (آبی یخی) ==========
+    const planet3Geo = new THREE.SphereGeometry(1.5, 64, 64);
+    const planet3Mat = new THREE.MeshPhongMaterial({ color: 0x4488ff, emissive: 0x004466, emissiveIntensity: 0.3 });
+    const planet3 = new THREE.Mesh(planet3Geo, planet3Mat);
+    planet3.position.set(5, -1, -110);
+    scene.add(planet3);
+    
+    // ========== سحابی (ابر ذرات رنگی) ==========
+    const nebulaCount = 1500;
+    const nebulaGeo = new THREE.BufferGeometry();
+    const nebulaPos = new Float32Array(nebulaCount * 3);
+    const nebulaColors = new Float32Array(nebulaCount * 3);
+    for (let i = 0; i < nebulaCount; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const rad = 15 + Math.random() * 25;
+        nebulaPos[i*3] = Math.cos(angle) * rad * (Math.random() - 0.5);
+        nebulaPos[i*3+1] = (Math.random() - 0.5) * 20;
+        nebulaPos[i*3+2] = -70 + (Math.random() - 0.5) * 40;
+        
+        nebulaColors[i*3] = 0.7 + Math.random() * 0.3;
+        nebulaColors[i*3+1] = 0.3 + Math.random() * 0.4;
+        nebulaColors[i*3+2] = 0.8 + Math.random() * 0.2;
+    }
+    nebulaGeo.setAttribute('position', new THREE.BufferAttribute(nebulaPos, 3));
+    nebulaGeo.setAttribute('color', new THREE.BufferAttribute(nebulaColors, 3));
+    const nebulaPoints = new THREE.Points(nebulaGeo, new THREE.PointsMaterial({ size: 0.18, vertexColors: true, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending }));
+    scene.add(nebulaPoints);
+    
+    // ========== سفینه فضایی (ساده) ==========
+    const shipGroup = new THREE.Group();
+    const bodyGeo = new THREE.CylinderGeometry(0.4, 0.6, 1.2, 8);
+    const bodyMat = new THREE.MeshPhongMaterial({ color: 0x88aaff, emissive: 0x3355aa, emissiveIntensity: 0.3 });
+    const body = new THREE.Mesh(bodyGeo, bodyMat);
+    body.rotation.x = Math.PI / 2;
+    shipGroup.add(body);
+    
+    const noseGeo = new THREE.ConeGeometry(0.35, 0.6, 8);
+    const nose = new THREE.Mesh(noseGeo, bodyMat);
+    nose.position.z = 0.7;
+    shipGroup.add(nose);
+    
+    const wingGeo = new THREE.BoxGeometry(1.2, 0.1, 0.3);
+    const wing = new THREE.Mesh(wingGeo, bodyMat);
+    wing.position.set(0, 0.2, -0.2);
+    shipGroup.add(wing);
+    
+    shipGroup.position.set(-12, 5, -150);
+    shipGroup.scale.set(0.8, 0.8, 0.8);
+    scene.add(shipGroup);
+    
+    // ========== حرکت دوربین با اسکرول (دوربین اول شخص به سمت جلو) ==========
+    gsap.registerPlugin(ScrollTrigger);
+    
+    const cameraStartZ = 12;
+    const cameraEndZ = -180;
+    
+    // انیمیشن دوربین
+    ScrollTrigger.create({
+        trigger: "body",
+        start: "top top",
+        end: "bottom bottom",
+        scrub: 1.2,
+        onUpdate: (self) => {
+            const progress = self.progress;
+            const newZ = cameraStartZ + (cameraEndZ - cameraStartZ) * progress;
+            camera.position.z = newZ;
+            
+            // حرکت آرام سفینه
+            if (progress > 0.5) {
+                const shipProgress = (progress - 0.5) * 2;
+                shipGroup.position.z = -150 + (shipProgress * 100);
+            }
+            
+            // چرخش ستاره‌های دور (حس حرکت)
+            stars.rotation.y = progress * 0.5;
+            distantStars.rotation.x = progress * 0.2;
+        }
+    });
+    
+    // نمایان شدن کارت‌ها
+    const cards = document.querySelectorAll('.card');
+    cards.forEach((card, idx) => {
+        ScrollTrigger.create({
+            trigger: card.parentElement,
+            start: "top 70%",
+            end: "bottom 30%",
+            onEnter: () => card.classList.add('visible'),
+            onLeave: () => card.classList.remove('visible'),
+            onEnterBack: () => card.classList.add('visible'),
+            onLeaveBack: () => card.classList.remove('visible')
+        });
+    });
+    
+    // مخفی شدن راهنمای اسکرول
+    ScrollTrigger.create({
+        trigger: "#sec2",
+        start: "top 80%",
+        onEnter: () => {
+            document.getElementById('scrollHint').style.opacity = '0';
+        }
+    });
+    
+    // ========== صدا ==========
+    let soundEnabled = false;
+    let sound;
+    
+    // ایجاد صدای ambient با Howler (صدای فضایی)
+    try {
+        sound = new Howl({
+            src: ['https://cdn.pixabay.com/download/audio/2022/01/18/audio_d3e5d3e5d3.mp3?filename=space-ambient-114554.mp3'],
+            loop: true,
+            volume: 0.4,
+            autoplay: false
+        });
+    } catch(e) {
+        console.log("صدا نیاز به تعامل کاربر دارد");
+    }
+    
+    const soundBtn = document.getElementById('sound-btn');
+    soundBtn.addEventListener('click', () => {
+        if (!soundEnabled) {
+            if (sound) sound.play();
+            soundEnabled = true;
+            soundBtn.textContent = '🔊';
+            soundBtn.style.background = '#a855f7';
+        } else {
+            if (sound) sound.pause();
+            soundEnabled = false;
+            soundBtn.textContent = '🔇';
+            soundBtn.style.background = 'rgba(0,0,0,0.7)';
+        }
+    });
+    
+    // ========== انیمیشن‌های خودکار ==========
+    let time = 0;
+    
+    function animate() {
+        requestAnimationFrame(animate);
+        time += 0.008;
+        
+        // چرخش سیاره‌ها
+        planet1.rotation.y += 0.005;
+        planet2.rotation.y += 0.008;
+        planet3.rotation.y += 0.003;
+        
+        // حرکت سحابی
+        nebulaPoints.rotation.y += 0.001;
+        
+        // چشمک زدن نور
+        const intensity = 0.8 + Math.sin(time * 3) * 0.2;
+        sunLight.intensity = intensity;
+        backLight.intensity = 0.5 + Math.sin(time * 2.5) * 0.2;
+        
+        // حرکت آرام سفینه
+        shipGroup.position.y = 5 + Math.sin(time * 1.5) * 0.3;
+        shipGroup.rotation.z = Math.sin(time * 1.2) * 0.1;
+        
+        renderer.render(scene, camera);
+    }
+    
+    animate();
+    
+    // ========== ریسپانسیو ==========
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+    
+    console.log("سفر فضایی آماده است! 🚀");
+</script>
+</body>
+</html>
